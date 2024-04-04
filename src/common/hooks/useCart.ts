@@ -11,12 +11,16 @@ const useCart = () => {
 
     const { data, ...restQuery } = useQuery({
         queryKey: ['cart', userId],
+        
         queryFn: async () => {
             const { data } = await axios.get(`http://localhost:8080/api/v1/carts/${userId}`)
             return data
-        }
+        },
+       
+        
     })
-
+    
+  
     const updateQuantityDebounce = debounce(async (productId, quantity: number) => {
         await axios.post(`http://localhost:8080/api/v1/carts/update`, {
             userId,

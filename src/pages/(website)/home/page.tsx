@@ -7,7 +7,7 @@ import Blog from './_component/Blog'
 import Services from './_component/Services'
 
 const HomePage = () => {
-    const { data } = useProductQuery({ _limit: 2 })
+    const { data } = useProductQuery({ _limit: 4 })
     const featuredProducts = data?.data.filter((product: IProduct) => product.featured === true)
     return (
         <>

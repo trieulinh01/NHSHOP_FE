@@ -8,7 +8,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { Input } from "@/components/ui/input";
 import { IProduct } from "@/common/types/product";
 import { addProduct } from "@/services/product";
@@ -27,8 +26,8 @@ type Inputs = {
     discount: number;
     featured: boolean;
     countInStock: number;
+    quantity: number;
 };
-
 const productSchema = Joi.object({
     name: Joi.string().required(),
     price: Joi.number().required(),
@@ -40,7 +39,6 @@ const productSchema = Joi.object({
     featured: Joi.boolean(),
     countInStock: Joi.number(),
 });
-
 const ProductAdd = () => {
     const { toast } = useToast();
     const form = useForm({
@@ -57,10 +55,12 @@ const ProductAdd = () => {
             countInStock: 0,
         },
     });
-
     const mutation = useMutation({
         mutationFn: async (product: IProduct) => {
-            const { data } = await addProduct(product);
+            const { data } = await addProduct({
+                ...product,
+                slug: product.name.toLowerCase().replace(/ /g, "-"),
+            });
             return data;
         },
         onSuccess: () => {
@@ -185,7 +185,7 @@ const ProductAdd = () => {
                         control={form.control}
                         name="featured"
                         render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormItem className="flex flex-row items-start p-4 space-x-3 space-y-0 border rounded-md">
                                 <FormControl>
                                     <Checkbox
                                         checked={field.value}

@@ -5,7 +5,8 @@ export interface IProduct {
     category?: string
     price: number
     gallery?: string[]
-
+    quantity: number,
+   
     description: string
     discount: number
     featured: boolean

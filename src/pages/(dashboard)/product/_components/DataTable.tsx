@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { flexRender } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
 
 import {
     Table,
@@ -9,24 +9,25 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-const DataTable = ({ table, columns }: any) => {
+
+const DataTable = ({ table, columns, onDeleteProduct, onEditProduct }: any) => {
     return (
         <Table>
             <TableHeader>
                 {table.getHeaderGroups().map((headerGroup: any) => (
                     <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header: any) => {
-                            return (
-                                <TableHead key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                              header.column.columnDef.header,
-                                              header.getContext(),
-                                          )}
-                                </TableHead>
-                            );
-                        })}
+                        {headerGroup.headers.map((header: any) => (
+                            <TableHead key={header.id}>
+                                {header.isPlaceholder
+                                    ? null
+                                    : flexRender(
+                                          header.column.columnDef.header,
+                                          header.getContext(),
+                                      )}
+                            </TableHead>
+                        ))}
+                        <TableHead>Action</TableHead>{" "}
+                        {/* Thêm tiêu đề cột Action */}
                     </TableRow>
                 ))}
             </TableHeader>
@@ -45,6 +46,23 @@ const DataTable = ({ table, columns }: any) => {
                                     )}
                                 </TableCell>
                             ))}
+                            <TableCell>
+                                {/* Thêm nút xóa và gọi hàm xóa sản phẩm khi nút được nhấn */}
+                                <Button
+                                    onClick={() =>
+                                        onDeleteProduct(row.original._id)
+                                    }
+                                >
+                                    Delete
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        onEditProduct(row.original._id)
+                                    }
+                                >
+                                    Edit
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     ))
                 ) : (

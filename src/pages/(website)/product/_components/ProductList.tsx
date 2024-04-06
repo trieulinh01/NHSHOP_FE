@@ -16,7 +16,11 @@ const ProductList = ({ products, pagination }: ProductListProps) => {
         <div>
             <div
                 className="product-list"
-                style={{ paddingLeft: "40px", paddingRight: "40px" }}
+                style={{
+                    paddingLeft: "30px",
+                    paddingRight: "30px",
+                    marginTop: "42px",
+                }}
             >
                 {products?.map((product: IProduct, index: number) => {
                     return (

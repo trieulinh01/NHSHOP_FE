@@ -35,12 +35,18 @@ const ShopPage = () => {
                 <p>Loading...</p>
             ) : (
                 <>
-                    <div className="limit-dropdown">
-                        <label htmlFor="limit">Show:</label>
+                    <div className="flex items-center mt-5 ml-10 space-x-4">
+                        <label
+                            htmlFor="limit"
+                            className="font-bold text-gray-600"
+                        >
+                            Show:
+                        </label>
                         <select
                             id="limit"
                             onChange={handleLimitChange}
                             defaultValue={limit}
+                            className="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-400"
                         >
                             <option value="2">2</option>
                             <option value="4">4</option>
@@ -48,6 +54,7 @@ const ShopPage = () => {
                             <option value="10">10</option>
                         </select>
                     </div>
+
                     <ProductList products={products} pagination={pagination} />
                 </>
             )}

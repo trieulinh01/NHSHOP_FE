@@ -8,15 +8,16 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { Input } from "@/components/ui/input";
 import { IProduct } from "@/common/types/product";
-import { addProduct } from "@/services/product";
+import { editProduct, getProductById } from "@/services/product";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation } from "@tanstack/react-query";
 import Joi from "joi";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 type Inputs = {
     name: string;
@@ -28,8 +29,8 @@ type Inputs = {
     discount: number;
     featured: boolean;
     countInStock: number;
+    quantity: number;
 };
-
 const productSchema = Joi.object({
     name: Joi.string().required(),
     price: Joi.number().required(),
@@ -44,41 +45,44 @@ const productSchema = Joi.object({
 
 const ProductEditPage = () => {
     const { toast } = useToast();
+    const { id } = useParams();
     const form = useForm({
         resolver: joiResolver(productSchema),
-        defaultValues: {
-            name: "",
-            price: 0,
-            category: "",
-            // gallery: [],
-            image: "",
-            description: "",
-            discount: 0,
-            featured: false,
-            countInStock: 0,
-        },
     });
-
     const mutation = useMutation({
         mutationFn: async (product: IProduct) => {
-            const { data } = await addProduct(product);
+            const { data } = await editProduct(product._id);
+            console.log(data);
             return data;
         },
         onSuccess: () => {
-            form.reset();
             toast({
-                title: "Thêm sản phẩm thành công",
+                title: "Sửa sản phẩm thành công",
                 variant: "success",
             });
         },
     });
-
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const product = await getProductById(id);
+                form.setValue("name", product.name);
+                form.setValue("price", product.price);
+                form.setValue("category", product.category);
+                form.setValue("discount", product.discount);
+            } catch (error) {
+                console.error("Error fetching product:", error);
+            }
+        };
+        fetchProduct();
+    }, [id, form]);
     const onSubmit: SubmitHandler<Inputs> = (product) => {
         mutation.mutate(product);
     };
+
     return (
         <div>
-            <h2 className="text-2xl font-semibold">Thêm sản phẩm</h2>
+            <h2 className="text-2xl font-semibold">Chỉnh sửa sản phẩm</h2>
             <hr className="my-5" />
             <Form {...form}>
                 <form

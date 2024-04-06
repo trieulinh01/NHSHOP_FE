@@ -32,3 +32,37 @@ export const addProduct = async (product: IProduct) => {
         console.log(error)
     }
 }
+export const deleteProduct = async (id: string) => {
+    try {
+        const response = await instance.delete(`/products/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        throw new Error('Error deleting product');
+    }
+};
+export const editProduct = async (product: IProduct): Promise<IProduct> => {
+    try {
+        if (!product || !product._id) {
+            throw new Error('Product or product _id is missing');
+        }
+        
+        const response = await instance.put(`/products/${product._id}`, product, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        
+        console.log(response.data);
+        
+        return response.data; 
+    } catch (error) {
+        console.error('Error editing product:', error);
+        throw new Error('Error editing product');
+    }
+};

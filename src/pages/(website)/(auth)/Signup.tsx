@@ -52,7 +52,7 @@ const Signup = () => {
         },
         onSuccess: (data) => {
             setUser(data);
-            navigate("/singin");
+            navigate("/signin");
         },
         onError: (error) => console.log(error),
     });

@@ -4,10 +4,19 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import "./../../../../styles/detail.scss";
 import { Rate } from "antd";
+import { useState } from "react";
 const DetailProduct = () => {
+    const [quantity, setQuantity] = useState(1);
+    const handleDecrease = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+    const handleIncrease = () => {
+        setQuantity(quantity + 1);
+    };
     const { id } = useParams();
     const { data: product, isLoading } = useProductQuery({ id: id! });
-    //console.log(product);
     const { data: relatedProduct } = useQuery({
         queryKey: ["RELATED_PRODUCT"],
         queryFn: async () => {
@@ -17,8 +26,6 @@ const DetailProduct = () => {
             return data;
         },
     });
-    console.log(relatedProduct);
-
     if (isLoading) return <p>Loading...</p>;
     console.log("relatedProduct", relatedProduct);
     return (
@@ -111,14 +118,25 @@ const DetailProduct = () => {
                                     </div>
                                 </div>
                                 <div className="detail-listtocart">
-                                    <button className="slots">
+                                    <button
+                                        className="slots"
+                                        onClick={handleDecrease}
+                                    >
                                         <span className="remove">-</span>
-                                        <span className="slot">1</span>
+                                    </button>
+                                    <span className="slot">{quantity}</span>
+                                    <button
+                                        className="slots"
+                                        onClick={handleIncrease}
+                                    >
                                         <span className="add">+</span>
                                     </button>
-                                    <button className="detail-addtocarts">
-                                        Add To Cart
-                                    </button>
+
+                                    <Link to={`/cart`}>
+                                        <button className="detail-addtocarts">
+                                            Add To Cart
+                                        </button>
+                                    </Link>
                                     <button className="detail-compare">
                                         Compare
                                     </button>
@@ -180,10 +198,7 @@ const DetailProduct = () => {
                     </div>
                     <div className="title-information">
                         <p className="title-information1">
-                            Embodying the raw, wayward spirit of rock ‘n’ roll,
-                            the Kilburn portable active stereo speaker takes the
-                            unmistakable look and sound of Marshall, unplugs the
-                            chords, and takes the show on the road.
+                            {product.description}
                         </p>
                         <p className="title-information2">
                             Weighing in under 7 pounds, the Kilburn is a
@@ -200,22 +215,96 @@ const DetailProduct = () => {
                     </div>
                     <div className="img-information">
                         <div className="img-information1">
-                            <img src="./assets/img/Group 1071.png" alt="" />
+                            <img src="/Group 1071.png" alt="" />
                         </div>
                         <div className="img-information2">
-                            <img src="./assets/img/Group 1062.png" alt="" />
+                            <img src="/Group 1062.png" alt="" />
                         </div>
                     </div>
                 </div>
             </section>
             <hr />
-            <h3>Related Products</h3>
+            <h3
+                style={{
+                    textAlign: "center",
+                    fontSize: "30px",
+                    fontWeight: "bold",
+                }}
+            >
+                Related Products
+            </h3>
 
-            {relatedProduct?.map((item) => (
-                <div>
-                    <Link to={`/products/${item._id}`}>{item.name}</Link>
-                </div>
-            ))}
+            <div
+                className="product-list"
+                style={{ paddingLeft: "40px", paddingRight: "40px" }}
+            >
+                {relatedProduct?.map((product, index) => (
+                    <div key={index} className="product-item">
+                        <div className="product-image">
+                            <img
+                                src={product?.image}
+                                alt="#"
+                                className="product__thumbnail"
+                            />
+                            <span className="product-sale">
+                                {product?.discount}%
+                            </span>
+                        </div>
+                        <div className="product-info">
+                            <h3 className="product__name">
+                                <Link
+                                    to={`/products/${product._id}`}
+                                    className="product__link"
+                                >
+                                    {product?.name}
+                                </Link>
+                            </h3>
+                            <a href="#" className="product__category">
+                                {product.categories}
+                            </a>
+                            <div className="product-price">
+                                <span className="product-price__new">
+                                    {product?.price -
+                                        product?.price *
+                                            (product?.discount / 100)}
+                                </span>
+                                <span className="product-price__old">
+                                    {product?.price}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="product-actions">
+                            <Link
+                                to={`/products/${product._id}`}
+                                className="btn product-action__quickview"
+                            >
+                                Quick View
+                            </Link>
+                            <Link
+                                to={`/cart`}
+                                className="btn product-action__addtocart"
+                                // onClick={() => mutate({ productId: product._id, quantity: 1 })}
+                            >
+                                Add To Cart
+                            </Link>
+                            <div className="product-actions-more">
+                                <span className="product-action__share">
+                                    Share
+                                </span>
+                                <span className="product-action__compare">
+                                    Compare
+                                </span>
+                                <span className="product-action__like">
+                                    Like
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    // <div>
+                    //     <Link to={`/products/${item._id}`}>{item.name}</Link>
+                    // </div>
+                ))}
+            </div>
         </div>
     );
 };

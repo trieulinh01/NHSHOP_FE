@@ -16,7 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import Joi from "joi";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 type Inputs = {
@@ -31,27 +31,28 @@ type Inputs = {
     countInStock: number;
     quantity: number;
 };
-const productSchema = Joi.object({
-    name: Joi.string().required(),
-    price: Joi.number().required(),
-    category: Joi.string(),
-    // gallery: Joi.array().items(Joi.string()),
-    image: Joi.string(),
-    description: Joi.string(),
-    discount: Joi.number(),
-    featured: Joi.boolean(),
-    countInStock: Joi.number(),
-});
+// const productSchema = Joi.object({
+//     name: Joi.string().required(),
+//     price: Joi.number().required(),
+//     category: Joi.string(),
+//     // gallery: Joi.array().items(Joi.string()),
+//     image: Joi.string(),
+//     description: Joi.string(),
+//     discount: Joi.number(),
+//     featured: Joi.boolean(),
+//     countInStock: Joi.number(),
+// });
 
 const ProductEditPage = () => {
+    const navigate = useNavigate();
     const { toast } = useToast();
     const { id } = useParams();
-    const form = useForm({
-        resolver: joiResolver(productSchema),
+    const form = useForm<Inputs>({
+        // resolver: joiResolver(productSchema),
     });
     const mutation = useMutation({
         mutationFn: async (product: IProduct) => {
-            const { data } = await editProduct(product._id);
+            const data = await editProduct({ ...product, _id: id });
             console.log(data);
             return data;
         },
@@ -65,11 +66,10 @@ const ProductEditPage = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const product = await getProductById(id);
-                form.setValue("name", product.name);
-                form.setValue("price", product.price);
-                form.setValue("category", product.category);
-                form.setValue("discount", product.discount);
+                if (id) {
+                    const product = await getProductById(id);
+                    form.reset(product);
+                }
             } catch (error) {
                 console.error("Error fetching product:", error);
             }
@@ -78,6 +78,7 @@ const ProductEditPage = () => {
     }, [id, form]);
     const onSubmit: SubmitHandler<Inputs> = (product) => {
         mutation.mutate(product);
+        navigate("/admin/products");
     };
 
     return (

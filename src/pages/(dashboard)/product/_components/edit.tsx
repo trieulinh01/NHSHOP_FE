@@ -16,8 +16,8 @@ import { useMutation } from "@tanstack/react-query";
 import Joi from "joi";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 type Inputs = {
     name: string;
@@ -47,9 +47,7 @@ const ProductEditPage = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
     const { id } = useParams();
-    const form = useForm<Inputs>({
-        // resolver: joiResolver(productSchema),
-    });
+    const form = useForm<Inputs>();
     const mutation = useMutation({
         mutationFn: async (product: IProduct) => {
             const data = await editProduct({ ...product, _id: id });
@@ -61,8 +59,10 @@ const ProductEditPage = () => {
                 title: "Sửa sản phẩm thành công",
                 variant: "success",
             });
+            navigate("/admin/products");
         },
     });
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -76,11 +76,10 @@ const ProductEditPage = () => {
         };
         fetchProduct();
     }, [id, form]);
+
     const onSubmit: SubmitHandler<Inputs> = (product) => {
         mutation.mutate(product);
-        navigate("/admin/products");
     };
-
     return (
         <div>
             <h2 className="text-2xl font-semibold">Chỉnh sửa sản phẩm</h2>

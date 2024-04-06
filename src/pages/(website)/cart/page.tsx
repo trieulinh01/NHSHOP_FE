@@ -11,6 +11,8 @@ const CartPage = () => {
         isLoading,
         isError,
     } = useCart();
+    console.log(data);
+
     if (isLoading) return <p>Loading...</p>;
     if (isError) return <p>Error</p>;
 
@@ -20,7 +22,10 @@ const CartPage = () => {
                 <div className="container cart__container">
                     <table className="cart-table">
                         <thead>
-                            <tr className="cart-table__head" style={{width:'100%'}}>
+                            <tr
+                                className="cart-table__head"
+                                style={{ width: "100%" }}
+                            >
                                 <th className="cart-table__header">Product</th>
                                 <th className="cart-table__header">Price</th>
                                 <th className="cart-table__header">Quantity</th>

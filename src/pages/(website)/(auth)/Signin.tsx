@@ -40,9 +40,10 @@ const Signin = () => {
             return data;
         },
         onSuccess: (data) => {
+            console.log(data);
             setUser(data);
             toast.success("Bạn đã đăng nhập!");
-            navigate("/");
+            // navigate("/");
         },
         onError: (error) => console.log(error),
     });

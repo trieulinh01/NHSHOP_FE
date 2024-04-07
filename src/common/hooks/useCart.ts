@@ -8,16 +8,13 @@ const useCart = () => {
     const queryClient = useQueryClient()
     const [user] = useLocalStorage('user', {})
     const userId = user?.user?._id
-
+    console.log( useLocalStorage('user', {}));
     const { data, ...restQuery } = useQuery({
-        queryKey: ['cart', userId],
-        
+        queryKey: ['cart', userId], 
         queryFn: async () => {
             const { data } = await axios.get(`http://localhost:8080/api/v1/carts/${userId}`)
             return data
-        },
-       
-        
+        },     
     })
     
   
@@ -33,7 +30,7 @@ const useCart = () => {
     }, 300)
 
     const { mutate } = useMutation({
-        mutationFn: async ({ action, productId }: { action: string; productId: string }) => {
+        mutationFn: async ({ action, productId,quantity }: { action: string; productId: string,quantity:number }) => {
             switch (action) {
                 case 'INCREMENT':
                     await axios.post(`http://localhost:8080/api/v1/carts/increase`, {
@@ -53,6 +50,13 @@ const useCart = () => {
                         productId
                     })
                     break
+                case 'ADD':
+                    await axios.post(`http://localhost:8080/api/v1/carts/add-to-cart`, {
+                        userId,
+                        productId,
+                        quantity
+                    })
+                    break;
             }
         },
         onSuccess: () => {

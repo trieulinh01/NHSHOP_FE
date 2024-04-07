@@ -12,13 +12,14 @@ import { Input } from "@/components/ui/input";
 import { IProduct } from "@/common/types/product";
 import { addProduct } from "@/services/product";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Joi from "joi";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 import { uploadFile } from "@/common/lib/utils";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const productSchema = Joi.object({
     name: Joi.string().required(),
@@ -38,6 +39,16 @@ const ProductAdd = () => {
     const [image, setImage] = useState<string>("");
     const form = useForm({
         resolver: joiResolver(productSchema),
+    });
+    const { data: categories } = useQuery({
+        queryKey: ["CATEGORY_LIST"],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                "http://localhost:8080/api/v1/categories",
+            );
+            return data;
+        },
+        staleTime: 60000, // Thời gian "cũ" được đặt là 1 phút (60000 miligiây)
     });
     const mutation = useMutation({
         mutationFn: async (product: IProduct) => {
@@ -74,7 +85,12 @@ const ProductAdd = () => {
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="name">Name</FormLabel>
+                                <FormLabel
+                                    className="bold-label"
+                                    htmlFor="name"
+                                >
+                                    Name
+                                </FormLabel>
                                 <FormControl>
                                     <Input {...field} id="name" />
                                 </FormControl>
@@ -87,7 +103,12 @@ const ProductAdd = () => {
                         name="price"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="price">Giá</FormLabel>
+                                <FormLabel
+                                    className="bold-label"
+                                    htmlFor="price"
+                                >
+                                    Giá
+                                </FormLabel>
                                 <FormControl>
                                     <Input {...field} id="price" />
                                 </FormControl>
@@ -100,11 +121,39 @@ const ProductAdd = () => {
                         name="category"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="category">
+                                <FormLabel
+                                    className="bold-label"
+                                    htmlFor="category"
+                                >
                                     Category
                                 </FormLabel>
+                                <br />
                                 <FormControl>
-                                    <Input {...field} id="category" />
+                                    <div className="mt-2">
+                                        <select
+                                            {...field}
+                                            id="category"
+                                            className="block px-3 py-2 border rounded-md shadow-sm w-[50%] mx-auto focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+                                        >
+                                            <option value="">
+                                                Select a category
+                                            </option>
+
+                                            {categories?.map(
+                                                (category: {
+                                                    _id?: number;
+                                                    name: string;
+                                                }) => (
+                                                    <option
+                                                        key={category._id}
+                                                        value={category._id}
+                                                    >
+                                                        {category.name}
+                                                    </option>
+                                                ),
+                                            )}
+                                        </select>
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -115,7 +164,12 @@ const ProductAdd = () => {
                         name="gallery"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="gallery">Gallery</FormLabel>
+                                <FormLabel
+                                    className="bold-label"
+                                    htmlFor="gallery"
+                                >
+                                    Gallery
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         {...field}
@@ -161,7 +215,12 @@ const ProductAdd = () => {
                         name="image"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="image">Image</FormLabel>
+                                <FormLabel
+                                    className="bold-label"
+                                    htmlFor="image"
+                                >
+                                    Image
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         {...field}
@@ -195,7 +254,10 @@ const ProductAdd = () => {
                         name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="description">
+                                <FormLabel
+                                    className="bold-label"
+                                    htmlFor="description"
+                                >
                                     Description
                                 </FormLabel>
                                 <FormControl>
@@ -210,7 +272,10 @@ const ProductAdd = () => {
                         name="discount"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel htmlFor="discount">
+                                <FormLabel
+                                    htmlFor="discount"
+                                    className="bold-label"
+                                >
                                     Discount
                                 </FormLabel>
                                 <FormControl>
@@ -232,7 +297,9 @@ const ProductAdd = () => {
                                     />
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
-                                    <FormLabel>Featured?</FormLabel>
+                                    <FormLabel className="bold-label">
+                                        Featured?
+                                    </FormLabel>
                                 </div>
                                 <FormMessage />
                             </FormItem>

@@ -1,6 +1,7 @@
 import { IProduct } from "@/common/types/product";
 import { Link } from "react-router-dom";
 import Pagination from "../../../../components/Pagination";
+import useCart from "@/common/hooks/useCart";
 type ProductListProps = {
     products?: IProduct[];
     pagination?: {
@@ -11,6 +12,14 @@ type ProductListProps = {
 };
 
 const ProductList = ({ products, pagination }: ProductListProps) => {
+    const {
+        data,
+        mutate,
+        handleQuantityChange,
+        calculateTotal,
+        isLoading,
+        isError,
+    } = useCart();
     const { totalPages } = pagination || { totalPages: 2 };
     return (
         <div>
@@ -68,7 +77,13 @@ const ProductList = ({ products, pagination }: ProductListProps) => {
                                 <Link
                                     to={`/cart`}
                                     className="btn product-action__addtocart"
-                                    // onClick={() => mutate({ productId: product._id, quantity: 1 })}
+                                    onClick={() =>
+                                        mutate({
+                                            action: "ADD",
+                                            productId: product._id,
+                                            quantity: 1,
+                                        })
+                                    }
                                 >
                                     Add To Cart
                                 </Link>

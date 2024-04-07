@@ -49,6 +49,7 @@ const DataTable = ({ table, columns, onDeleteProduct, onEditProduct }: any) => {
                             <TableCell>
                                 {/* Thêm nút xóa và gọi hàm xóa sản phẩm khi nút được nhấn */}
                                 <Button
+                                    className="mb-2 bg-red-700  w-[60px]"
                                     onClick={() =>
                                         onDeleteProduct(row.original._id)
                                     }
@@ -56,6 +57,7 @@ const DataTable = ({ table, columns, onDeleteProduct, onEditProduct }: any) => {
                                     Delete
                                 </Button>
                                 <Button
+                                    className="mr-2 bg-green-700 w-[60px]"
                                     onClick={() =>
                                         onEditProduct(row.original._id)
                                     }
